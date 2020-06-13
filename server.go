@@ -20,7 +20,7 @@ type User struct {
 	Age  int    `bson:"age"`
 }
 
-var user User
+// var user User
 
 //main
 func main() {
@@ -107,16 +107,16 @@ func find(c *gin.Context) {
 
 	_id, _ := primitive.ObjectIDFromHex(id)
 
-	var res User
-	err = db.Collection("user").FindOne(ctx, bson.M{"_id": _id}).Decode(&res)
+	user := new(User)
+	err = db.Collection("user").FindOne(ctx, bson.M{"_id": _id}).Decode(&user)
 	if Error(c, err) {
 		return //exit
 	}
 
-	fmt.Println(res)
+	fmt.Println(user)
 	c.JSON(200, gin.H{
 		"message": "success",
-		"data":    res,
+		"data":    user,
 	})
 }
 
@@ -127,6 +127,7 @@ func insert(c *gin.Context) {
 		return //exit
 	}
 
+	user := new(User)
 	c.BindJSON(&user)
 	fmt.Println(user.Name)
 	res, err := db.Collection("user").InsertOne(ctx, bson.M{"name": user.Name, "age": user.Age})
@@ -149,6 +150,7 @@ func updateOne(c *gin.Context) {
 		return //exit
 	}
 
+	user := new(User)
 	c.BindJSON(&user)
 
 	id := c.Param("id")
@@ -175,6 +177,7 @@ func deleteOne(c *gin.Context) {
 		return //exit
 	}
 
+	user := new(User)
 	c.BindJSON(&user)
 
 	id := c.Param("id")
